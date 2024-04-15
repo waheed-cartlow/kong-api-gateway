@@ -1,0 +1,160 @@
+_format_version: "2.1"
+
+services:
+
+- name: laravel-api-server
+  url: http://172.17.0.1:8002/api/users
+  routes:
+  - name: test
+    paths:
+    - /users
+    # strip_path: true
+
+consumers:
+- username: user
+
+  basicauth_credentials:
+  - consumer: user
+    username: waheed  
+    password: '123456789'
+
+keyauth_credentials:
+- consumer: user
+  key: abc
+
+# acls:
+# - consumer: user
+#   group: group1
+
+# # plugins section
+plugins:
+
+# - name: http-logapi
+#   config: 
+#     http_endpoint: http://172.29.241.32:8080/
+#     method: POST
+#     timeout: 1000
+#     keepalive: 1000
+#     flush_timeout: 2
+#     retry_count: 15
+
+- name: file-log
+  config: 
+    path: /logs/file.log
+    reopen: false
+  enabled: true
+
+- name: request-size-limiting
+  config: 
+    allowed_payload_size: 1
+    size_unit: kilobytes
+    require_content_length: false
+
+- name: request-termination
+  config: 
+    status_code: 403
+    message: Request terminated
+    # body: "{a:b}"
+    # content_type: "application/json; charset=utf-8"
+    trigger: "q"
+  enabled: true
+
+# - name: acl
+#   config: 
+#     allow:
+#     - group1
+#     hide_groups_header: true
+#   enabled: false
+
+# - name: basic-auth
+#   config: 
+#     hide_credentials: false
+#   enabled: true
+
+- name: key-auth
+  config: 
+    key_names:
+    - apikey
+    key_in_body: true
+    key_in_header: true
+    key_in_query: true
+    hide_credentials: false
+    run_on_preflight: true
+  enabled: true
+
+# - name: proxy-cache
+#   config: 
+#     response_code:
+#     - 200
+#     request_method:
+#     - GET
+#     - HEAD
+#     content_type:
+#     - text/plain
+#     - application/json
+#     - application/json; charset=utf-8
+#     cache_ttl: 300
+#     strategy: memory
+#   enabled: true
+
+- name: bot-detection
+  config:
+    deny:
+    - "(C|c)hrome"
+    - "curl"
+  enabled: false
+
+- name: cors
+  config:
+    origins:
+    - '*'
+    methods:
+    - GET
+    - POST
+    headers:
+    - Accept
+    - Accept-Version
+    - Content-Length
+    - Content-MD5
+    - Content-Type
+    - Date
+    - X-Auth-Token
+    - Authorization
+    exposed_headers:
+    - X-Auth-Token
+    credentials: true
+    max_age: 3600
+    preflight_continue: true
+  enabled: true
+
+- name: rate-limiting
+  config: 
+#    second: 5
+    hour: 100
+    policy: redis
+    fault_tolerant: true
+    hide_client_headers: false
+    redis_ssl: false
+    redis_ssl_verify: false
+    redis_host: 172.17.0.1
+    redis_port: 6379
+    error_message: "Requests Limit Exeeded"
+# comment these if you don't want to store rate limiting data in redis
+#    policy: redis
+#    redis_host: 172.27.59.36
+#    redis_password: example
+
+- name: ip-restriction
+  config: 
+    deny:
+    - 192.0.0.1
+    status: 401
+    message: cannot grant access
+
+- name: prometheus
+  config:
+    per_consumer: false
+  enabled: true
+
+
+
