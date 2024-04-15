@@ -31,7 +31,7 @@ php artisan key:generate
 ```console
 php artisan migrate
 ```
-
+### Run Laravel Project
 ```console
 php artisan serve
 ````
