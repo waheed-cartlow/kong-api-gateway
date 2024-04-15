@@ -18,3 +18,11 @@ Route::get('/users', function (Request $request) {
 
     return Response::json($data, 200);
 });
+
+Route::get('/users/{id}', function (Request $request, $id) {
+
+    $data['user'] = User::find($id);
+    $data['message'] = 'User Detail';
+
+    return Response::json($data, 200);
+});

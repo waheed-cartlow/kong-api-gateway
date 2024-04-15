@@ -2,13 +2,13 @@ _format_version: "2.1"
 
 services:
 
-- name: laravel-api-server
-  url: http://172.17.0.1:8002/api/users
+- name: laravel-api-user-service
+  url: http://172.17.0.1:8002
   routes:
-  - name: test
+  - name: users
     paths:
-    - /users
-    # strip_path: true
+    - /api/users
+    strip_path: false
 
 consumers:
 - username: user
@@ -22,9 +22,9 @@ keyauth_credentials:
 - consumer: user
   key: abc
 
-# acls:
-# - consumer: user
-#   group: group1
+acls:
+- consumer: user
+  group: group1
 
 # # plugins section
 plugins:
@@ -59,12 +59,13 @@ plugins:
     trigger: "q"
   enabled: true
 
-# - name: acl
-#   config: 
-#     allow:
-#     - group1
-#     hide_groups_header: true
-#   enabled: false
+- name: acl
+  service: laravel-api-user-service
+  config: 
+    allow:
+    - group1
+    hide_groups_header: true
+  enabled: true
 
 # - name: basic-auth
 #   config: 
@@ -147,9 +148,10 @@ plugins:
 - name: ip-restriction
   config: 
     deny:
-    - 192.0.0.1
+    - 172.18.0.0
     status: 401
-    message: cannot grant access
+    message: Your Ip has been blocked
+  enabled: true
 
 - name: prometheus
   config:
