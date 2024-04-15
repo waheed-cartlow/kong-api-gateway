@@ -20,6 +20,9 @@ cd laravel_api/laravel
 cp .env.example .env
 ```
 ```console
+composer install
+```
+```console
 php artisan key:generate
 ```
 
