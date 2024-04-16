@@ -83,32 +83,32 @@ plugins:
     run_on_preflight: true
   enabled: true
 
-# - name: proxy-cache
-#   config: 
-#     response_code:
-#     - 200
-#     request_method:
-#     - GET
-#     - HEAD
-#     content_type:
-#     - text/plain
-#     - application/json
-#     - application/json; charset=utf-8
-#     cache_ttl: 300
-#     strategy: memory
-#   enabled: true
+- name: proxy-cache
+  config: 
+    response_code:
+    - 200
+    request_method:
+    - GET
+    - HEAD
+    content_type:
+    - text/plain
+    - application/json
+    - application/json; charset=utf-8
+    cache_ttl: 10 # Seconds
+    strategy: memory
+  enabled: true
 
 - name: bot-detection
   config:
     deny:
-    - "(C|c)hrome"
+    - "index|spider|crawl|wget|slurp|Mediapartners-Google"
     - "curl"
-  enabled: false
+  enabled: true
 
 - name: cors
   config:
     origins:
-    - '*'
+    - 'www.test.com'
     methods:
     - GET
     - POST
@@ -139,7 +139,7 @@ plugins:
     redis_ssl_verify: false
     redis_host: 172.17.0.1
     redis_port: 6379
-    error_message: "Requests Limit Exeeded"
+    error_message: "Requests Limit Exceeded"
 # comment these if you don't want to store rate limiting data in redis
 #    policy: redis
 #    redis_host: 172.27.59.36

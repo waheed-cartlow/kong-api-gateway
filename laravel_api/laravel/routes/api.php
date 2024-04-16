@@ -19,6 +19,20 @@ Route::get('/users', function (Request $request) {
     return Response::json($data, 200);
 });
 
+Route::post('/users', function (Request $request) {
+
+    $payload = $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:8',
+    ]);
+
+    $data['user'] = User::create($payload);
+    $data['message'] = 'User Created Successfully';
+
+    return Response::json($data, 201);
+});
+
 Route::get('/users/{id}', function (Request $request, $id) {
 
     $data['user'] = User::find($id);
